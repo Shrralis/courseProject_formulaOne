@@ -69,13 +69,13 @@ public class Controller {
 
         DataFormController controller = loader.getController();
 
-        controller.setType(type);
         setDataFormClickListeners(controller, type);
 
         Stage dataFormStage = new Stage();
 
         dataFormStage.setScene(new Scene(loader.getRoot()));
         dataFormStage.show();
+        controller.setType(type);
     }
 
     private void setDataFormClickListeners(DataFormController controller, DataFormController.Type type) {
@@ -85,10 +85,10 @@ public class Controller {
         switch (type) {
             case Add:
                 okListener = () -> {
-                    // TODO: something;
+                    System.out.println("OK");
                 };
                 cancelListener = () -> {
-                    // TODO: something
+                    System.out.println("cancel");
                 };
                 break;
             case Edit:

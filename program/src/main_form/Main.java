@@ -22,29 +22,29 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws IOException {
         loader.load();
 
-        if (db.openConnection()) {
+//        if (db.openConnection()) {
             drawForm(primaryStage);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-
-            alert.setTitle("Критична помилка");
-            alert.setHeaderText("Помилка з'єднання");
-            alert.setContentText("З'єднання з сервером неможливе.\n" +
-                    "Всі деталі в консолі.\n" +
-                    "Програма буде завершена.");
-            alert.showAndWait();
-            primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
-        }
+//        } else {
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//
+//            alert.setTitle("Критична помилка");
+//            alert.setHeaderText("Помилка з'єднання");
+//            alert.setContentText("З'єднання з сервером неможливе.\n" +
+//                    "Всі деталі в консолі.\n" +
+//                    "Програма буде завершена.");
+//            alert.showAndWait();
+//            primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
+//        }
     }
     @SuppressWarnings("unchecked")
     private void drawForm(Stage primaryStage) {
         Parent root = loader.getRoot();
 
+        primaryStage.show();
         primaryStage.setTitle("Формула-1");
         primaryStage.setScene(new Scene(root));
         primaryStage.setMinWidth(root.minWidth(-1));
         primaryStage.setMinHeight(root.minHeight(-1) + 50);
-        primaryStage.show();
         primaryStage.setOnCloseRequest(event -> db.closeConnection());
     }
 }
