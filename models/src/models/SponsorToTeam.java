@@ -9,17 +9,9 @@ import java.sql.SQLException;
  */
 public class SponsorToTeam extends Owner {
     public Team team = null;
-    public int sponsor = 0;
+    public Sponsor sponsor = null;
 
     public SponsorToTeam() {}
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
-    public void setSponsor(int sponsor) {
-        this.sponsor = sponsor;
-    }
     @Override
     public SponsorToTeam parse(ResultSet from, Connection connection) {
         super.parse(from);
@@ -27,12 +19,29 @@ public class SponsorToTeam extends Owner {
         try {
             team = ParseUtils.parseViaReflection(new Team(), get("SELECT * FROM `teams` WHERE `id` = " +
                     from.getInt("store"), connection));
-            sponsor = from.getInt("sponsor");
+            sponsor = ParseUtils.parseViaReflection(new Sponsor(), get("SELECT * FROM `sponsors` WHERE `id` = " +
+                    from.getInt("sponsor"), connection));
         } catch (SQLException ignored) {}
         return this;
     }
 
     public ResultSet get(String sql, Connection connection) throws SQLException {
         return connection.createStatement().executeQuery(sql);
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public Sponsor getSponsor() {
+        return sponsor;
+    }
+
+    public void setSponsor(Sponsor sponsor) {
+        this.sponsor = sponsor;
     }
 }

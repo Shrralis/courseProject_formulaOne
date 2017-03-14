@@ -1,43 +1,40 @@
 package sponsors_data_form;
 
 import base.DataFormController;
-import base.OnMouseClickListener;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import models.Sponsor;
 
 /**
  * Created by shrralis on 3/13/17.
  */
-public class Controller implements DataFormController {
-    private OnMouseClickListener okClickListener = null;
-    private OnMouseClickListener cancelClickListener = null;
+public class Controller extends DataFormController {
+    {
+        objectToProcess = new Sponsor();
+    }
 
-    @FXML private TextField name;
-    @FXML private TextField country;
+    @FXML public TextField name;
+    @FXML public TextField country;
+    @FXML public CheckBox bName;
+    @FXML public CheckBox bCountry;
 
-    @FXML
-    private void onMouseOkClick() {
-        if (okClickListener != null) {
-            okClickListener.onMouseClick();
+    @Override
+    protected final boolean areTheFieldsValidForAdding() {
+        return !isAnyTextFieldEmpty();
+    }
+    @Override
+    protected final void objectToProcessBasedOnFields() {
+        if (bName.isSelected()) {
+            objectToProcess.setName(name.getText().trim().isEmpty() ? null : name.getText().trim());
+        }
+
+        if (bCountry.isSelected()) {
+            ((Sponsor) objectToProcess).setCountry(country.getText().trim().isEmpty() ? null : country.getText().trim());
         }
     }
-    @FXML
-    private void onMouseCancelClick() {
-        if (cancelClickListener != null) {
-            cancelClickListener.onMouseClick();
-        }
-    }
-
     @Override
-    public void setType(Type type) {
-
-    }
-    @Override
-    public void setOnMouseOkClickListener(OnMouseClickListener listener) {
-        okClickListener = listener;
-    }
-    @Override
-    public void setOnMouseCancelClickListener(OnMouseClickListener listener) {
-        cancelClickListener = listener;
+    protected final String getDatabaseTableName() {
+        return "sponsors";
     }
 }

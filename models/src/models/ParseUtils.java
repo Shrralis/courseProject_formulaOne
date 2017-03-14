@@ -3,6 +3,8 @@ package models;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.util.Date;
 
 /**
  * Collection of helpers to parse server responses.
@@ -96,7 +98,13 @@ public class ParseUtils {
 
             String fieldName = field.getName();
             Class<?> fieldType = field.getType();
-            Object value = source.getObject(fieldName);
+            Object value = null;
+
+            for (int i = 1; i <= source.getMetaData().getColumnCount(); i++) {
+                if (source.getMetaData().getColumnName(i).equals(fieldName)) {
+                    value = source.getObject(fieldName);
+                }
+            }
 
             if (value == null) {
                 continue;
@@ -209,30 +217,18 @@ public class ParseUtils {
         Class<?> fieldType = field.getType();
         Object value = field.get(object);
 
-        if (fieldType.isPrimitive() && value instanceof Number) {
-            Number number = (Number) value;
-
-            if (fieldType.equals(int.class)) {
-                result += number;
-            } else if (fieldType.equals(long.class)) {
-                result += number;
-            } else if (fieldType.equals(float.class)) {
-                result += number;
-            } else if (fieldType.equals(double.class)) {
-                result += number;
-            } else if (fieldType.equals(short.class)) {
-                result += number;
-            } else if (fieldType.equals(byte.class)) {
-                result += number;
-            }
+        if (value instanceof Number) {
+            result += (Number) value;
         } else if (fieldType.equals(boolean.class)) {
             result += value;
-        } else {
-            if (fieldType.equals(String.class)) {
-                result += "'" + value.toString() + "'";
-            } else if (Owner.class.isAssignableFrom(fieldType)) {
-                result += ((Owner) value).getId();
-            }
+        } else if (fieldType.equals(Date.class)) {
+            result += "'" + DateWorker.convertToString((Date) value) + "'";
+        } else if (fieldType.equals(Time.class)) {
+            result += "'" + value + "'";
+        } else if (fieldType.equals(String.class)) {
+            result += "'" + value.toString() + "'";
+        } else if (Owner.class.isAssignableFrom(fieldType)) {
+            result += ((Owner) value).getId();
         }
         return result;
     }

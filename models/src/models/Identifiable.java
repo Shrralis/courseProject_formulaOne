@@ -9,5 +9,5 @@ public interface Identifiable {
     /**
      * Повертає унікальний ідентифікатор об'єкту(взагалі, це є полем "id" з БД).
      */
-    int getId();
+    Integer getId();
 }

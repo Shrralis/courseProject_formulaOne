@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * Created by shrralis on 2/19/17.
  */
 public class Owner extends Model implements Identifiable {
-    public int id = 0;
+    public Integer id = null;
 
     public String name = null;
 
@@ -38,16 +38,20 @@ public class Owner extends Model implements Identifiable {
     /**
      * Creates according with given ID.
      */
-    public Owner(int id) {
+    public Owner(Integer id) {
         this.id = id;
     }
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     @Override
     public String toString() {

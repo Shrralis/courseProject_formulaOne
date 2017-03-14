@@ -3,6 +3,7 @@ package models;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 
 /**
  * Created by shrralis on 3/13/17.
@@ -14,26 +15,25 @@ public class Result extends Owner {
 
     public Pilot pilot = null;
 
-    public String race_time = null;
+    public Time race_time = null;
 
-    public int pilot_points = 0;
+    public Integer pilot_points = null;
 
-    public int team_points = 0;
+    public Integer team_points = null;
     @SuppressWarnings("unused")
     public Result() {}
-
     @Override
-    public Owner parse(ResultSet from, Connection connection) {
+    public Result parse(ResultSet from, Connection connection) {
         super.parse(from);
 
         try {
             race = ParseUtils.parseViaReflection(new Race(), get("SELECT * FROM `races` WHERE `id` = " +
-                    from.getInt("race"), connection));
+                    from.getInt("race") + ";", connection));
             team = ParseUtils.parseViaReflection(new Team(), get("SELECT * FROM `teams` WHERE `id` = " +
-                    from.getInt("team"), connection));
+                    from.getInt("team") + ";", connection));
             pilot = ParseUtils.parseViaReflection(new Pilot(), get("SELECT * FROM `pilots` WHERE `id` = " +
-                    from.getInt("pilot"), connection));
-            race_time = from.getString("race_time");
+                    from.getInt("pilot") + ";", connection));
+            race_time = DateWorker.convertToTime(from.getString("race_time"));
             pilot_points = from.getInt("pilot_points");
             team_points = from.getInt("team_points");
         } catch (SQLException ignored) {}
@@ -68,27 +68,27 @@ public class Result extends Owner {
         this.pilot = pilot;
     }
 
-    public String getRace_time() {
+    public Time getRace_time() {
         return race_time;
     }
 
-    public void setRace_time(String race_time) {
+    public void setRace_time(Time race_time) {
         this.race_time = race_time;
     }
 
-    public int getPilot_points() {
+    public Integer getPilot_points() {
         return pilot_points;
     }
 
-    public void setPilot_points(int pilot_points) {
+    public void setPilot_points(Integer pilot_points) {
         this.pilot_points = pilot_points;
     }
 
-    public int getTeam_points() {
+    public Integer getTeam_points() {
         return team_points;
     }
 
-    public void setTeam_points(int team_points) {
+    public void setTeam_points(Integer team_points) {
         this.team_points = team_points;
     }
 }

@@ -54,6 +54,9 @@ public class ServerQuery<T extends Owner> implements Serializable {
                             result += parseOrConditionFromArray((HashMap<String, Object>) mQueryParameters.get(key));
                         }
                     } else {
+
+                        System.out.println(mQueryParameters.get(key).getClass().getSimpleName());
+
                         String sKey = (key.lastIndexOf(".") != -1
                                 ? key.substring(0, key.lastIndexOf(".") + 1)
                                 : "") + "`" + key.substring(key.indexOf(".") + 1) + "`";
@@ -93,7 +96,6 @@ public class ServerQuery<T extends Owner> implements Serializable {
         String result = "(";
 
         for (String key : map.keySet()) {
-            System.out.println(key);
             if (map.get(key) != null) {
                 if (key.matches("^arr(\\s|\\S)*/")) {
                     if (!((HashMap) map.get(key)).isEmpty()) {
@@ -140,16 +142,12 @@ public class ServerQuery<T extends Owner> implements Serializable {
 
             result += ");";
         }
-        System.out.println(result);
         return result;
     }
 
     public String getUpdateMysqlQuery() throws IllegalAccessException {
-        String result = "UPDATE `" + sTableName + "` SET " + ParseUtils.parseViaReflectionToSqlUpdate(mObjectToProcess) + " " +
+        return "UPDATE `" + sTableName + "` SET " + ParseUtils.parseViaReflectionToSqlUpdate(mObjectToProcess) + " " +
                 getMySQLCondition() + ";";
-
-        System.out.println(result);
-        return result;
     }
 
     public void setQueryParameters(HashMap<String, Object> queryParameters) {

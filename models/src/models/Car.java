@@ -15,13 +15,13 @@ public class Car extends Owner {
 
     public String engine_power = null;
 
-    public int number_of_cylinders = 0;
+    public Integer number_of_cylinders = 0;
     @SuppressWarnings("unused")
-    Car() {}
+    public Car() {}
     @SuppressWarnings("unused")
     public Car(ResultSet from) { parse(from); }
     @Override
-    public Owner parse(ResultSet from) {
+    public Car parse(ResultSet from) {
         super.parse(from);
 
         try {
@@ -32,5 +32,49 @@ public class Car extends Owner {
             number_of_cylinders = from.getInt("number_of_cylinders");
         } catch (SQLException ignored) {}
         return this;
+    }
+    @Override
+    public String toString() {
+        return model;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getChassis() {
+        return chassis;
+    }
+
+    public void setChassis(String chassis) {
+        this.chassis = chassis;
+    }
+
+    public String getEngine_brand() {
+        return engine_brand;
+    }
+
+    public void setEngine_brand(String engine_brand) {
+        this.engine_brand = engine_brand;
+    }
+
+    public String getEngine_power() {
+        return engine_power;
+    }
+
+    public void setEngine_power(String engine_power) {
+        this.engine_power = engine_power;
+    }
+
+    public Integer getNumber_of_cylinders() {
+        return number_of_cylinders;
+    }
+
+    public void setNumber_of_cylinders(Integer number_of_cylinders) {
+        this.number_of_cylinders = number_of_cylinders;
     }
 }

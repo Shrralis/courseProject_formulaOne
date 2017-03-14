@@ -2,7 +2,6 @@ package server;
 
 import models.*;
 
-import java.io.IOException;
 import java.sql.*;
 
 /**
@@ -10,18 +9,28 @@ import java.sql.*;
  */
 @SuppressWarnings("unchecked")
 public class DatabaseWorker {
+    private static DatabaseWorker iam = null;
     private Connection connection = null;
 
-    public boolean openConnection() {
+    private DatabaseWorker() {}
+
+    public static boolean openConnection() {
+        if (iam == null) {
+            iam = new DatabaseWorker();
+        } else {
+            closeConnection();
+            return openConnection();
+        }
+
         final String sDatabaseName = "formula_one";
-        final String sServerUser = "root";
-        final String sServerPassword = "zolotorig91";
+        final String sServerUser = "ТУТ_ВВЕДИ_ІМ'Я_КОРИСТУВАЧА_MYSQL_SERVER";
+        final String sServerPassword = "ТУТ_ВВЕДИ_ПАРОЛЬ_КОРИСТУВАЧА_MYSQL_SERVER";
 
         try {
-            if (connection == null || connection.isClosed()) {
+            if (iam.connection == null || iam.connection.isClosed()) {
                 Class.forName("com.mysql.jdbc.Driver").newInstance();
 
-                connection = DriverManager.getConnection(
+                iam.connection = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/" + sDatabaseName + "?useUnicode=true&characterEncoding=UTF-8",
                         sServerUser,
                         sServerPassword
@@ -34,15 +43,18 @@ public class DatabaseWorker {
         }
     }
 
-    public final void closeConnection() {
+    public static final void closeConnection() {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
+            if (iam != null) {
+                if (iam.connection != null && !iam.connection.isClosed()) {
+                    iam.connection.close();
+                }
+                iam = null;
             }
         } catch (SQLException ignored) {}
     }
 
-    public ServerResult processQuery(ServerQuery query) {
+    public static ServerResult processQuery(ServerQuery query) {
         if (query == null) {
             System.out.println("No query from the server!");
             return ServerResult.create(1, "No query");
@@ -54,33 +66,22 @@ public class DatabaseWorker {
             }
 
             if (method.equalsIgnoreCase("get")) {
-                return get(query);
+                return iam.get(query);
             }
 
             if (method.equalsIgnoreCase("add")) {
-                return add(query);
+                return iam.add(query);
             }
 
             if (method.equalsIgnoreCase("delete")) {
-                return delete(query);
+                return iam.delete(query);
             }
 
             if (method.equalsIgnoreCase("edit")) {
-                return edit(query);
+                return iam.edit(query);
             }
         }
         return null;
-    }
-
-    private ServerResult processResult(ServerResult result) throws IOException {
-        if (result == null) {
-            result = ServerResult.create(-1, "some error");
-        } else {
-            if (result.getMessage().equalsIgnoreCase("disconnect")) {
-                return null;
-            }
-        }
-        return result;
     }
 
     private ServerResult get(ServerQuery query) {
@@ -88,17 +89,24 @@ public class DatabaseWorker {
 
         try {
             String table = query.getTableName().toLowerCase();
-
             if (connection != null && !connection.isClosed()) {
                 Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                         ResultSet.CONCUR_READ_ONLY);
 
                 if (table.matches("^(results)|(teams)|(pilots)|(teams_has_sponsors)|(sponsors)|(cars)|(races)$")) {
-                    if (table.equalsIgnoreCase("sponsors") && query.hasQueryParams()) {
-                        ResultSet sponsors = statement.executeQuery("SELECT * FROM `teams_has_sponsors`" +
-                                query.getMySQLCondition() + ";");
-                        result = ServerResult.create(new List(sponsors, SponsorToTeam.class, connection));
 
+                    if (table.equalsIgnoreCase("teams_has_sponsors")) {
+                        String sql;
+
+                        if (query.getMySQLCondition().matches("(\\D|\\d)+sponsor(\\D|\\d)+")) {
+                            sql = "SELECT t.* FROM `teams_has_sponsors` ths, `teams` t" +
+                                    query.getMySQLCondition() + " AND ths.`team` = t.`id`;";
+                            result = ServerResult.create(new List(statement.executeQuery(sql), Team.class, connection));
+                        } else {
+                            sql = "SELECT s.* FROM `teams_has_sponsors` ths, `sponsors` s" +
+                                    query.getMySQLCondition() + " AND ths.`sponsor` = s.`id`;";
+                            result = ServerResult.create(new List(statement.executeQuery(sql), Sponsor.class));
+                        }
                         return result;
                     }
 
@@ -106,26 +114,16 @@ public class DatabaseWorker {
                             query.getMySQLCondition() + ";");
 
                     if (table.equalsIgnoreCase("results")) {
-                        result = ServerResult.create(new List(resultSet, Result.class));
-                    }
-
-                    if (table.equalsIgnoreCase("teams")) {
+                        result = ServerResult.create(new List(resultSet, Result.class, connection));
+                    } else if (table.equalsIgnoreCase("teams")) {
                         result = ServerResult.create(new List(resultSet, Team.class, connection));
-                    }
-
-                    if (table.equalsIgnoreCase("pilots")) {
+                    } else if (table.equalsIgnoreCase("pilots")) {
                         result = ServerResult.create(new List(resultSet, Pilot.class));
-                    }
-
-                    if (table.equalsIgnoreCase("sponsors")) {
+                    } else if (table.equalsIgnoreCase("sponsors")) {
                         result = ServerResult.create(new List(resultSet, Sponsor.class));
-                    }
-
-                    if (table.equalsIgnoreCase("cars")) {
+                    } else if (table.equalsIgnoreCase("cars")) {
                         result = ServerResult.create(new List(resultSet, Car.class));
-                    }
-
-                    if (table.equalsIgnoreCase("races")) {
+                    } else if (table.equalsIgnoreCase("races")) {
                         result = ServerResult.create(new List(resultSet, Race.class));
                     }
                 } else {
@@ -149,6 +147,8 @@ public class DatabaseWorker {
                         ResultSet.CONCUR_READ_ONLY);
 
                 if (table.matches("^(results)|(teams)|(pilots)|(teams_has_sponsors)|(sponsors)|(cars)|(races)$")) {
+                    System.out.println(query.getInsertMysqlQuery());
+
                     int iResult = statement.executeUpdate(query.getInsertMysqlQuery(), Statement.RETURN_GENERATED_KEYS);
 
                     if (iResult >= 0) {
@@ -172,9 +172,7 @@ public class DatabaseWorker {
                     }
                 }
             }
-        } catch (SQLException | IllegalAccessException ignored) {
-            ignored.printStackTrace();
-        }
+        } catch (SQLException | IllegalAccessException ignored) {}
         return result;
     }
 
@@ -229,9 +227,7 @@ public class DatabaseWorker {
                     }
                 }
             }
-        } catch (SQLException | IllegalAccessException ignored) {
-            ignored.printStackTrace();
-        }
+        } catch (SQLException | IllegalAccessException ignored) {}
         return result;
     }
 }
