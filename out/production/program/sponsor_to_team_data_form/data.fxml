@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="100.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="sponsor_to_team_data_form.Controller">
+   <ComboBox fx:id="team" prefWidth="286.0" promptText="Оберіть команду" />
+   <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="16.0">
+      <Button mnemonicParsing="false" onMouseClicked="#onMouseCancelClick" text="Відміна" />
+      <Button mnemonicParsing="false" onMouseClicked="#onMouseOkClick" text="ОК" />
+      <padding>
+         <Insets left="8.0" top="8.0" />
+      </padding>
+   </HBox>
+   <padding>
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+   </padding>
+</VBox>
