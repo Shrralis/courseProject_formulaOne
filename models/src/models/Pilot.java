@@ -23,7 +23,7 @@ public class Pilot extends Owner {
     public Date first_race_date = null;
 
     public String first_race_place = null;
-    @SuppressWarnings("unused")
+
     public Pilot() {}
     @SuppressWarnings("unused")
     public Pilot(ResultSet from) {

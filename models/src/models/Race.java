@@ -18,7 +18,7 @@ public class Race extends Owner {
     public Integer laps = null;
 
     public Double lap_length = null;
-    @SuppressWarnings("unused")
+
     public Race() {}
     @SuppressWarnings("unused")
     public Race(ResultSet from) {

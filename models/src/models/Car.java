@@ -16,10 +16,12 @@ public class Car extends Owner {
     public String engine_power = null;
 
     public Integer number_of_cylinders = 0;
-    @SuppressWarnings("unused")
+
     public Car() {}
     @SuppressWarnings("unused")
-    public Car(ResultSet from) { parse(from); }
+    public Car(ResultSet from) {
+        parse(from);
+    }
     @Override
     public Car parse(ResultSet from) {
         super.parse(from);

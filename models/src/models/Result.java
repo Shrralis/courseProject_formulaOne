@@ -20,7 +20,7 @@ public class Result extends Owner {
     public Integer pilot_points = null;
 
     public Integer team_points = null;
-    @SuppressWarnings("unused")
+
     public Result() {}
     @Override
     public Result parse(ResultSet from, Connection connection) {

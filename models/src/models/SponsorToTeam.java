@@ -7,15 +7,13 @@ import java.sql.SQLException;
 /**
  * Created by shrralis on 3/13/17.
  */
-public class SponsorToTeam extends Owner {
+public class SponsorToTeam extends Model {
     public Team team = null;
     public Sponsor sponsor = null;
 
     public SponsorToTeam() {}
     @Override
     public SponsorToTeam parse(ResultSet from, Connection connection) {
-        super.parse(from);
-
         try {
             team = ParseUtils.parseViaReflection(new Team(), get("SELECT * FROM `teams` WHERE `id` = " +
                     from.getInt("store"), connection));

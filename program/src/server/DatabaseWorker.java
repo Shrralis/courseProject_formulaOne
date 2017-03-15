@@ -43,7 +43,7 @@ public class DatabaseWorker {
         }
     }
 
-    public static final void closeConnection() {
+    public static void closeConnection() {
         try {
             if (iam != null) {
                 if (iam.connection != null && !iam.connection.isClosed()) {
