@@ -188,7 +188,7 @@ public class DatabaseWorker {
 
                 if (table.matches("^(results)|(teams)|(pilots)|(teams_has_sponsors)|(sponsors)|(cars)|(races)$")) {
                     int iResult = statement.executeUpdate("DELETE FROM `" + table + "` WHERE `id` = "
-                            + query.getObjectToProcess().getId() + ";");
+                            + ((Owner) query.getObjectToProcess()).getId() + ";");
 
                     if (iResult >= 0) {
                         result = ServerResult.create(0, "deleted");
@@ -215,7 +215,7 @@ public class DatabaseWorker {
                     int iResult = statement.executeUpdate(query.getUpdateMysqlQuery(), Statement.RETURN_GENERATED_KEYS);
 
                     if (iResult >= 0) {
-                        int id = query.getObjectToProcess().getId();
+                        int id = ((Owner) query.getObjectToProcess()).getId();
 
                         result = ServerResult.create(
                                 new List(statement.executeQuery("SELECT * FROM `" + table + "` WHERE `id` = " + id + ";"),

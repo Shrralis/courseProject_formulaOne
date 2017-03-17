@@ -90,7 +90,7 @@ public class Controller extends DataFormComboBoxController {
     @Override
     protected final void objectToProcessBasedOnFields() {
         if (bName.isSelected()) {
-            objectToProcess.setName(name.getText().trim().isEmpty() ? null : name.getText().trim());
+            ((Team) objectToProcess).setName(name.getText().trim().isEmpty() ? null : name.getText().trim());
         }
 
         if (bBirthdate.isSelected()) {

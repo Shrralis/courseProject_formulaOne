@@ -26,7 +26,7 @@ public class Controller extends DataFormController {
     @Override
     protected final void objectToProcessBasedOnFields() {
         if (bName.isSelected()) {
-            objectToProcess.setName(name.getText().trim().isEmpty() ? null : name.getText().trim());
+            ((Sponsor) objectToProcess).setName(name.getText().trim().isEmpty() ? null : name.getText().trim());
         }
 
         if (bCountry.isSelected()) {
